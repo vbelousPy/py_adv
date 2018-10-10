@@ -51,6 +51,8 @@ def test_stack():
         my_stack.push("30")
     except TypeError:
         print(True)
+    else:
+        print(False)
 
     my_stack.push(30)
     my_stack.push(12)
@@ -66,6 +68,21 @@ def test_stack():
     my_stack = Stack()
     my_stack.push("test")
     print(my_stack.type == type("test").__name__)
+
+    my_stack = Stack(limit=0)
+    try:
+        my_stack.push(1)
+    except LimitExceedError:
+        print(True)
+    else:
+        print(False)
+
+    try:
+        my_stack.pull()
+    except EmptyStackError:
+        print(True)
+    else:
+        print(False)
 
 
 test_stack()
