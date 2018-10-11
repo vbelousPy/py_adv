@@ -3,23 +3,21 @@ from lesson_01.stack_exceptions import *
 
 class Stack:
 
-    def __init__(self, data_type=object(), limit=None):
+    def __init__(self, data_type=object, limit=None):
         """"Конструктор принимает опциональный аргумент data_type, по умолчанию - object,
         опциональный аргумент limit (int), который определяет максимальный размер стэка, по умолчанию - None."""
-        self.data_type = type(data_type)
-        self.limit = limit if limit is not None else -1
+        self.data_type = data_type
+        self.limit = limit
         self.my_stack = list()
 
     def _push(self, new_element):
         """"проверяет возможность добавления элемента в стэк (по лимиту и типу).
            В случае несоответствия типов должен генерить исключение TypeError.
            В случае достижения лимита - генерить LimitExceedError."""
-        if len(self.my_stack) == 0 and self.data_type == type(object()):
-            self.data_type = type(new_element)
-
-        if not self.data_type == type(new_element) and not self.data_type == type(object()):
+        if not self.data_type == type(new_element):
             raise TypeError
-        if not self.limit == -1 and len(self.my_stack) >= self.limit:
+
+        if self.limit is not None and len(self.my_stack) >= self.limit:
             raise LimitExceedError
 
     def push(self, new_element):
@@ -48,7 +46,7 @@ class Stack:
     @property
     def type(self):
         """возвращает тип данных стэка."""
-        return self.data_type.__name__
+        return self.data_type
 
     def __str__(self):
         """Возвращающет строку вида Stack<тип данных>"""
@@ -56,7 +54,7 @@ class Stack:
 
 
 def test_stack():
-    stack_type = int()
+    stack_type = int
     my_stack = Stack(stack_type)
 
     try:
@@ -75,13 +73,18 @@ def test_stack():
     my_stack.clear()
     print(my_stack.count() == 0)
 
-    print(my_stack.type == type(stack_type).__name__)
+    print(my_stack.type == stack_type)
 
     my_stack = Stack()
-    my_stack.push("test")
-    print(my_stack.type == type("test").__name__)
+    try:
+        my_stack.push("test")
+    except TypeError:
+        print(True)
+    else:
+        print(False)
+    print(my_stack.type == object)
 
-    my_stack = Stack(limit=0)
+    my_stack = Stack(limit=0, data_type=int)
     try:
         my_stack.push(1)
     except LimitExceedError:
