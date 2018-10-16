@@ -5,12 +5,14 @@ from json import JSONDecodeError
 from re import match
 
 
-def check_path(fn):
+def fix_path(fn):
     def wrapper(*args):
         dir_list = list([i for i in args])
         for i in range(len(dir_list)):
             if not dir_list[i].rfind("/") == len(dir_list[i]) - 1:
                 dir_list[i] += "/"
+            if not os.path.exists(dir_list[i]):
+                os.makedirs(dir_list[i])
         fn(*dir_list)
 
     return wrapper
@@ -34,7 +36,7 @@ def process(number_string):
         return False
 
 
-@check_path
+@fix_path
 def monitor(read_dir, result_dir, error_dir):
     valid_files = list(filter(lambda f: os.path.isfile(read_dir + f) and match(".*\.txt$", f),
                               os.listdir(read_dir)))
