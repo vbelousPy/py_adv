@@ -36,7 +36,9 @@ def process(number_string):
 
 @check_path
 def monitor(read_dir, result_dir, error_dir):
-    for file_name in os.listdir(read_dir):
+    valid_files = list(filter(lambda f: os.path.isfile(read_dir + f) and match(".*\.txt$", f),
+                              os.listdir(read_dir)))
+    for file_name in valid_files:
         if os.path.isfile(read_dir + file_name) and match(".*\.txt$", file_name):
             fr = open(read_dir + file_name, "r")
             result = process(fr.read())
