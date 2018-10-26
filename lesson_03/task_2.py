@@ -8,6 +8,23 @@ from re import match
 import xlrd as xlrd
 
 
+class ValidationError(Exception):
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UsernameValidationError(ValidationError):
+    pass
+
+
+class EmailValidationError(ValidationError):
+    pass
+
+
+class JoinedValidationError(ValidationError):
+    pass
+
+
 class FileConverter:
     COLUMN_NAME = ("Username", "Email", "Joined")
 
@@ -22,11 +39,12 @@ class FileConverter:
             new_user = dict()
             for col_num in range(len(row)):
                 new_user.update({FileConverter.COLUMN_NAME[col_num]: row[col_num]})
-            if self.__validate_data(new_user):
+            try:
+                self.__validate_data(new_user)
                 new_user.update({FileConverter.COLUMN_NAME[2]: datetime.strftime(
                     datetime.strptime(new_user.get(FileConverter.COLUMN_NAME[2]), "%Y-%m-%d"), "%m/%d/%Y")})
                 self.user_list.append(new_user)
-            else:
+            except ValidationError:
                 error_list.append(new_user)
 
         if len(error_list) != 0:
@@ -34,10 +52,12 @@ class FileConverter:
 
     @staticmethod
     def __validate_data(data):
-        username = match("^[A-Za-z]*$", data.get(FileConverter.COLUMN_NAME[0]))
-        email = match("^[A-Za-z_.]*@[A-Za-z]*\\.[A-Za-z]*(\\.[A-Za-z]*)?$", data.get(FileConverter.COLUMN_NAME[1]))
-        joined = match("^\\d{4}-\\d{2}-\\d{2}$", data.get(FileConverter.COLUMN_NAME[2]))
-        return username and email and joined
+        if not match("^[A-Za-z]*$", data.get(FileConverter.COLUMN_NAME[0])):
+            raise UsernameValidationError
+        if not match("^[A-Za-z_.]*@[A-Za-z]*\\.[A-Za-z]*(\\.[A-Za-z]*)?$", data.get(FileConverter.COLUMN_NAME[1])):
+            raise EmailValidationError
+        if not match("^\\d{4}-\\d{2}-\\d{2}$", data.get(FileConverter.COLUMN_NAME[2])):
+            raise JoinedValidationError
 
     @staticmethod
     def __error_writer(data):
