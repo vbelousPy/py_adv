@@ -5,7 +5,7 @@ import shelve
 from datetime import datetime
 from re import match
 
-import xlrd as xlrd
+import xlrd
 
 
 class ValidationError(Exception):
@@ -21,7 +21,7 @@ class EmailValidationError(ValidationError):
     pass
 
 
-class JoinedValidationError(ValidationError):
+class DateValidationError(ValidationError):
     pass
 
 
@@ -57,7 +57,7 @@ class FileConverter:
         if not match("^[A-Za-z_.]*@[A-Za-z]*\\.[A-Za-z]*(\\.[A-Za-z]*)?$", data.get(FileConverter.COLUMN_NAME[1])):
             raise EmailValidationError
         if not match("^\\d{4}-\\d{2}-\\d{2}$", data.get(FileConverter.COLUMN_NAME[2])):
-            raise JoinedValidationError
+            raise DateValidationError
 
     @staticmethod
     def __error_writer(data):
@@ -82,8 +82,8 @@ class FileConverter:
 
     def shelve_writer(self):
         with shelve.open("output_shelve", "c") as shelve_file:
-            for i in range(len(self.user_list)):
-                shelve_file.update({str(i): self.user_list[i]})
+            for some_user in self.user_list:
+                shelve_file.update({some_user.get(FileConverter.COLUMN_NAME[0]): some_user})
 
 
 file_converter = FileConverter("example_2.xls")
