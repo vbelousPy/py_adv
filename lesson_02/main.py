@@ -45,7 +45,7 @@ def monitor(read_dir, result_dir, error_dir):
             fr = open(read_dir + file_name, "r")
             result = process(fr.read())
             fr.close()
-            if result:
+            if result >= 0:
                 with open(result_dir + file_name, "w") as fw:
                     fw.write(str(result))
                     os.remove(read_dir + file_name)
