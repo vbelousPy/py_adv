@@ -4,7 +4,9 @@ import sys
 
 def revers_file(file_path):
     with open(file_path, "rb+") as f:
-        f_len = len(f.read())
+        f_len = 0
+        while f.read(1):
+            f_len += 1
         for i in range(f_len):
             for j in range(f_len - i - 1):
                 f.seek(j)
