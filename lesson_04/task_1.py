@@ -34,9 +34,9 @@ class Context:
         return iter(self.__dict__.items())
 
 
-my_context = Context(**{"z1": 12, "z2": 9, "z3": 0})
-my_context.x1 = 1
-my_context.t14 = 23
-my_context.w = 7
-print(my_context)
-print("size =", len(my_context))
+# my_context = Context(**{"z1": 12, "z2": 9, "z3": 0})
+# my_context.x1 = 1
+# my_context.t14 = 23
+# my_context.w = 7
+# print(my_context)
+# print("size =", len(my_context))
