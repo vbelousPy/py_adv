@@ -43,5 +43,5 @@ my_context.t14 = 23
 my_context.w = 7
 print(my_context)
 # print("size =", len(my_context))
-for k, v in my_context:
-    print(k, "=", v)
+for key, val in my_context:
+    print(key, "=", val)
