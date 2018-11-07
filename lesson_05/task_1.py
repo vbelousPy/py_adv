@@ -20,7 +20,7 @@ def dict_builder():
 
 
 def new_str(self):
-    result_str = "Class <{}>:".format(str(self.__class__.__name__), self.__dict__)
+    result_str = "Class <{}>:".format(str(self.__class__.__name__))
     some_list = [k + " = " + v for k, v in self.__class__.__dict__.items() if
                  not callable(getattr(self, k)) and not k.startswith('__')]
     for i in some_list:
