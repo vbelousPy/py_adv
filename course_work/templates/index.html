@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="{{ url_for('static', filename='jquery-3.3.1.js') }}"></script>
+    <link rel="icon" type="img/ico" href="favicon.ico">
+    <meta charset="UTF-8">
+    <title>CryptoScanner v0.1</title>
+    <script>
+        var is_updating = false;
+
+        function start() {
+            start_grabber();
+            is_updating = true
+            updating()
+        }
+
+        function start_grabber() {
+            $.ajax({
+                url: "http://localhost:9000/start_grabber",
+                async: true,
+                crossDomain: true,
+                type: 'GET',
+                dataType: "text",
+                success: function () {
+                    console.log("start");
+                }
+            });
+        }
+
+        function updating() {
+            while (is_updating === true) {
+                $.ajax({
+                    url: "http://localhost:9000/get_records",
+                    async: true,
+                    crossDomain: true,
+                    type: 'GET',
+                    dataType: "text",
+                    success: function (data) {
+                        console.log("data = " + data);
+                    }
+                });
+                setTimeout(updating, {{app_env.CS_UPDATE_TIME * 1000}})
+            }
+        }
+
+        function stop() {
+            stop_grabber();
+            is_updating = false
+        }
+
+        function stop_grabber() {
+            $.ajax({
+                url: "http://localhost:9000/stop_grabber",
+                async: true,
+                crossDomain: true,
+                type: 'GET',
+                dataType: "text",
+                success: function () {
+                    console.log("stop");
+                }
+            });
+        }
+
+
+
+    </script>
+    <style>
+        .variables > div {
+            /*background: #fc3;*/
+            /*border: 1 px solid black;*/
+            padding: 3px;
+            margin-top: 3px;
+        }
+
+        input {
+            float: left;
+            width: 120px;
+            margin-left: 3px;
+            margin-top: 7px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+<table border="1" cellpadding="3">
+    <tr>
+        <th>
+            Currency
+        </th>
+        <th>
+            Poloniex
+        </th>
+        <th>
+            Bittrex
+        </th>
+        <th>
+            Bitfinex
+        </th>
+    </tr>
+    <tr>
+        <td>
+            BTC
+        </td>
+        <td>
+            4000 / 4100
+        </td>
+        <td>
+            4120 / 4201
+        </td>
+        <td>
+            3990 / 4121
+        </td>
+    </tr>
+    <tr>
+        <td>
+            ETH
+        </td>
+        <td>
+            120 / 121
+        </td>
+        <td>
+            130 / 131
+        </td>
+        <td>
+            122 / 124
+        </td>
+    </tr>
+</table>
+<div class="variables">
+    <div>
+        CURRENCIES: {{app_env.CS_CURRENCIES}}
+    </div>
+    <div id="update_time">
+        UPDATE_TIME: {{app_env.CS_UPDATE_TIME}} SEC
+    </div>
+    <div id="grabber_time">
+        GRABBER_TIME: {{app_env.CS_GRABBER_TIME}} SEC
+    </div>
+    <div>
+        DEBUG: {{app_env.CS_DEBUG}}
+    </div>
+    <div>
+        LOGFILE: {{app_env.CS_LOGFILE}}
+    </div>
+</div>
+<div>
+    <input type="button" value="Start" onclick="start()">
+    <input type="button" value="Stop" onclick="stop()">
+</div>
+</body>
+</html>
