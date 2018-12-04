@@ -1,6 +1,5 @@
 from peewee import *
 
-
 database = MySQLDatabase("local_database", user='root', password='copermine', host='127.0.0.1', port=3306)
 
 
@@ -47,11 +46,12 @@ def update_record(exchange_kwargs):
 
 
 def read_records():
-    exchange_list = ExchangeRate.select()
-    return list([i.__data__ for i in exchange_list])
+    try:
+        return list([i.__data__ for i in ExchangeRate.select()])
+    except ProgrammingError:
+        return []
     # for exchange in exchange_list:
     #     print(exchange.__data__)
-
 
 # read_records()
 # ExchangeRate.create_table([ExchangeRate])

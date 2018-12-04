@@ -7,10 +7,20 @@
     <title>CryptoScanner v0.1</title>
     <script>
         var is_updating = false;
+        var currency_list = "{{app_env.CS_CURRENCIES}}".split(",");
+
+        // window.onload = function() {
+        //     var header_table = "<tr><th>Currency</th>";
+        //     for (var i = 0; i < currency_list.length; i++) {
+        //         header_table += "<th>" + currency_list[i] + "</th>";
+        //     }
+        //     header_table += "</tr>";
+        //     $("#currency_table").append(header_table)
+        // };
 
         function start() {
             start_grabber();
-            is_updating = true
+            is_updating = true;
             updating()
         }
 
@@ -28,7 +38,7 @@
         }
 
         function updating() {
-            while (is_updating === true) {
+            if (is_updating === true) {
                 $.ajax({
                     url: "http://localhost:9000/get_records",
                     async: true,
@@ -36,7 +46,24 @@
                     type: 'GET',
                     dataType: "text",
                     success: function (data) {
-                        console.log("data = " + data);
+                        var json_array = $.parseJSON(data);
+                        var body_table;
+                        var exchange_name = "";
+                        for (var i = 0; i < json_array.length; i++) {
+                            var json_object = json_array[i];
+                            if (exchange_name !== json_object.exchange_name) {
+                                if (i > 0) {
+                                    body_table += "</tr>";
+                                }
+                                body_table += "<tr>";
+                                body_table += "<td>" + json_object.exchange_name + "</td>";
+                            }
+                            exchange_name = json_object.exchange_name;
+                            body_table += "<td>" + json_object.currency_to + ": " + json_object.buy + "/" + json_object.sell + "; </td>";
+                            console.log(json_array[i]);
+                        }
+                        body_table += "</tr>";
+                        $("#body_table").append(body_table)
                     }
                 });
                 setTimeout(updating, {{app_env.CS_UPDATE_TIME * 1000}})
@@ -62,7 +89,6 @@
         }
 
 
-
     </script>
     <style>
         .variables > div {
@@ -80,53 +106,16 @@
         }
 
 
-
     </style>
 </head>
 <body>
-<table border="1" cellpadding="3">
+<table id="currency_table" border="1" cellpadding="3">
     <tr>
-        <th>
-            Currency
-        </th>
-        <th>
-            Poloniex
-        </th>
-        <th>
-            Bittrex
-        </th>
-        <th>
-            Bitfinex
-        </th>
+        <th>Exchange</th>
+        <th>Currency</th>
     </tr>
-    <tr>
-        <td>
-            BTC
-        </td>
-        <td>
-            4000 / 4100
-        </td>
-        <td>
-            4120 / 4201
-        </td>
-        <td>
-            3990 / 4121
-        </td>
-    </tr>
-    <tr>
-        <td>
-            ETH
-        </td>
-        <td>
-            120 / 121
-        </td>
-        <td>
-            130 / 131
-        </td>
-        <td>
-            122 / 124
-        </td>
-    </tr>
+    <tbody id="body_table">
+    </tbody>
 </table>
 <div class="variables">
     <div>

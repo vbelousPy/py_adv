@@ -2,9 +2,11 @@
 # import time
 # from datetime import datetime
 #
+import threading
 
 from flask import Flask
 from flask import render_template
+from flask import jsonify
 from pyenv import ENV
 
 from course_work.additions.flask_decorator import crossdomain
@@ -45,7 +47,7 @@ def index():
 @app.route("/start_grabber", methods=["GET"])
 @crossdomain(origin='*')
 def start_grabber():
-    grabber.start()
+    threading.Thread(target=grabber.start(), args=()).start()
     return "Start", 200
 
 
@@ -59,23 +61,23 @@ def stop_grabber():
 @app.route("/get_records", methods=["GET"])
 @crossdomain(origin='*')
 def get_records():
-    return str(read_records())
+    return jsonify(read_records())
 
 
 if __name__ == "__main__":
-    app_env = {"CS_CURRENCIES": getattr(ENV, "CS_CURRENCIES"),
+    app_env = {"CS_CURRENCIES": getattr(ENV, "CS_CURRENCIES")[1:-1],
                "CS_UPDATE_TIME": getattr(ENV, "CS_UPDATE_TIME"),
                "CS_GRABBER_TIME": getattr(ENV, "CS_GRABBER_TIME"),
                "CS_DEBUG": getattr(ENV, "CS_DEBUG"),
                "CS_LOGFILE": getattr(ENV, "CS_LOGFILE")}
 
     exchange_list = [Poloniex(), Bitfinex(), Cryptex(), Bittrex()]
-    currency_list = app_env.get("CS_CURRENCIES")[1:-1].split(",")
-    grabber_time = app_env.get("CS_CURRENCIES")[1:-1].split(",")
+    currency_list = app_env.get("CS_CURRENCIES").split(",")
+    grabber_time = app_env.get("CS_GRABBER_TIME")
     grabber = Grabber(exchange_list, currency_list, grabber_time)
 
-    print("exchange_list = " + str(exchange_list))
-    print("currency_list = " + str(currency_list))
-    print("grabber_time = " + str(grabber_time))
+    # print("exchange_list = " + str(exchange_list))
+    # print("currency_list = " + str(currency_list))
+    # print("grabber_time = " + str(grabber_time))
 
-    # app.run(port=9000)
+    app.run(port=9000)
