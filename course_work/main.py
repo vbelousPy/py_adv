@@ -1,4 +1,3 @@
-import logging
 import threading
 
 from flask import Flask
@@ -52,8 +51,7 @@ if __name__ == "__main__":
                "CS_DEBUG": getattr(ENV, "CS_DEBUG"),
                "CS_LOGFILE": getattr(ENV, "CS_LOGFILE")}
 
-    # logging_level = logging.INFO if app_env.get("CS_DEBUG") else logging.ERROR
-    logging_level = logging.DEBUG
+    logging_level = logging.INFO if app_env.get("CS_DEBUG") else logging.ERROR
     logging.basicConfig(filename=app_env.get("CS_LOGFILE"), level=logging_level)
     logging.debug(str(datetime.now()) + " app_env = " + str(app_env))
 
