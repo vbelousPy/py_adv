@@ -16,16 +16,15 @@ class Grabber:
         self.update_time = update_time
 
     def start(self):
-        self.is_updating = True
-        while self.is_updating:
-            # print("working = " + str(datetime.now())) LOGGING
-            for exchange in self.exchange_list:
-                for currency in self.currency_list:
-                    update_record(exchange.get_data("USD", currency.strip()))
-            time.sleep(self.update_time)
+        if not self.is_updating:
+            self.is_updating = True
+            while self.is_updating:
+                for exchange in self.exchange_list:
+                    for currency in self.currency_list:
+                        update_record(exchange.get_data("USD", currency.strip()))
+                time.sleep(self.update_time)
 
     def stop(self):
-        # print("stop") LOGGING
         self.is_updating = False
 
 
@@ -83,4 +82,3 @@ class Bittrex(BaseExchange):
         url_api = "https://bittrex.com/api/v1.1/public/getmarketsummary?market={}-{}".format(currency_from, currency_to)
         result = requests.get(url_api).json().get("result")[0]
         return result.get("Bid"), result.get("Ask")
-

@@ -7,16 +7,6 @@
     <title>CryptoScanner v0.1</title>
     <script>
         var is_updating = false;
-        var currency_list = "{{app_env.CS_CURRENCIES}}".split(",");
-
-        // window.onload = function() {
-        //     var header_table = "<tr><th>Currency</th>";
-        //     for (var i = 0; i < currency_list.length; i++) {
-        //         header_table += "<th>" + currency_list[i] + "</th>";
-        //     }
-        //     header_table += "</tr>";
-        //     $("#currency_table").append(header_table)
-        // };
 
         function start() {
             start_grabber();
@@ -53,17 +43,18 @@
                             var json_object = json_array[i];
                             if (exchange_name !== json_object.exchange_name) {
                                 if (i > 0) {
-                                    body_table += "</tr>";
+                                    body_table += "</td></tr>";
                                 }
                                 body_table += "<tr>";
-                                body_table += "<td>" + json_object.exchange_name + "</td>";
+                                body_table += "<td>" + json_object.exchange_name + "</td><td>";
                             }
                             exchange_name = json_object.exchange_name;
-                            body_table += "<td>" + json_object.currency_to + ": " + json_object.buy + "/" + json_object.sell + "; </td>";
-                            console.log(json_array[i]);
+                            body_table += json_object.currency_to + ": " + json_object.buy + "/" + json_object.sell + "; ";
                         }
                         body_table += "</tr>";
-                        $("#body_table").append(body_table)
+                        var main_table = $("#body_table");
+                        main_table.empty();
+                        main_table.append(body_table)
                     }
                 });
                 setTimeout(updating, {{app_env.CS_UPDATE_TIME * 1000}})
