@@ -1,9 +1,16 @@
 import logging
 from datetime import datetime
 
+import pymysql
 from peewee import *
 
-database = MySQLDatabase("local_database", user='root', password='somepassword', host='127.0.0.1', port=3306)
+db_name = "local_database"
+db_user = "root"
+db_password = "1234567890"
+db_host = "127.0.0.1"
+db_port = 3306
+
+database = MySQLDatabase(database=db_name, user=db_user, password=db_password, host=db_host, port=db_port)
 
 
 class BaseModel(Model):
@@ -43,6 +50,10 @@ def update_record(exchange_kwargs):
             raise ProgrammingError
     except (ValueError, IntegrityError):
         logging.error(str(datetime.now()) + " parsing error " + exchange_kwargs.get("exchange_name"))
+    except InternalError:
+        conn = pymysql.connect(host=db_host, user=db_user, password=db_password)
+        conn.cursor().execute("CREATE DATABASE " + db_name)
+        conn.close()
 
 
 def read_records():
