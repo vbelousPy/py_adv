@@ -45,11 +45,11 @@ def get_records():
 
 
 if __name__ == "__main__":
-    app_env = {"CS_CURRENCIES": getattr(ENV, "CS_CURRENCIES") if False else "[BTC,ETH,ZEC]",
-               "CS_UPDATE_TIME": getattr(ENV, "CS_UPDATE_TIME") if False else 180,
-               "CS_GRABBER_TIME": getattr(ENV, "CS_GRABBER_TIME") if False else 180,
-               "CS_DEBUG": getattr(ENV, "CS_DEBUG") if False else False,
-               "CS_LOGFILE": getattr(ENV, "CS_LOGFILE") if False else "crypto_scanner.log"}
+    app_env = {"CS_CURRENCIES": getattr(ENV, "CS_CURRENCIES"),
+               "CS_UPDATE_TIME": getattr(ENV, "CS_UPDATE_TIME"),
+               "CS_GRABBER_TIME": getattr(ENV, "CS_GRABBER_TIME"),
+               "CS_DEBUG": getattr(ENV, "CS_DEBUG"),
+               "CS_LOGFILE": getattr(ENV, "CS_LOGFILE")}
 
     logging_level = logging.INFO if app_env.get("CS_DEBUG") else logging.ERROR
     logging.basicConfig(filename=app_env.get("CS_LOGFILE"), level=logging_level)
